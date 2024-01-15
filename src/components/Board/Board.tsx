@@ -54,25 +54,16 @@ export default function Board({ columns, rows }: BoardProps) {
     }
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
+        event.preventDefault();      
     }
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
-    
-        const boardRect = event.currentTarget.getBoundingClientRect();
-        const cellWidth = boardRect.width / columns;
-        const cellHeight = boardRect.height / rows;
-    
-        const relativeX = event.clientX - boardRect.left;
-        const relativeY = event.clientY - boardRect.top;
-    
-        const boardX = Math.floor(relativeX / cellWidth);
-        const boardY = Math.floor(relativeY / cellHeight);
-    
-        const droppedPieceData = event.dataTransfer.getData("piece");
-        const droppedPiece = JSON.parse(droppedPieceData) as Piece;
-        setPosition(piece, boardX, boardY);
+
+        const boardX = event.currentTarget.className.split(' ')[1]      
+        const boardY = event.currentTarget.className.split(' ')[2] 
+        console.log("Setting at: ", boardX, boardY)
+        setPosition(piece, parseInt(boardY), parseInt(boardX))
     }
 
     useEffect(() => {
@@ -87,14 +78,15 @@ export default function Board({ columns, rows }: BoardProps) {
                         <div
                             key={`${rowIndex} ${colIndex}`}
                             className={`cell ${colIndex} ${rowIndex} ${row ? 'filled' : ''}`}
+                            onDragOver={handleDragOver}
+                            onDrop={handleDrop}
                         >
                             {piece.shape.map((_piece, index) => (
                                 <div
                                     key={index}
                                     draggable
                                     onDragStart={(event) => handleDragStart(event, piece)}
-                                    onDragOver={handleDragOver}
-                                    onDrop={handleDrop}
+                                    
                                     className={`pieceCell`}
                                     style={{
                                         width: '50px', // Set width and height or other styles to make the draggable piece visible
